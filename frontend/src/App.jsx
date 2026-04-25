@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { useState, useEffect, useMemo } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
   FaArrowRight, 
   FaArrowUp, 
@@ -9,17 +9,20 @@ import {
   FaMapMarkerAlt, 
   FaSchool,
   FaClock,
-  FaInfoCircle
+  FaInfoCircle,
+  FaTrashAlt,
+  FaCheckCircle
 } from 'react-icons/fa'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useNavigate, useParams, Link } from 'react-router-dom'
 import EventFeatureCard from './components/EventFeatureCard'
 import FloatingBlobs from './components/FloatingBlobs'
-import GlassButton from './components/GlassButton'
 import SectionWrap from './components/SectionWrap'
 import SiteFooter from './components/SiteFooter'
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
-const TOKEN_KEY = 'edu-admin-token'
+const API_BASE = 'http://localhost:5000/api'
+const TOKEN_KEY = 'admin_token'
+
+
 
 const emptyForm = {
   title: '',
@@ -68,6 +71,7 @@ function eventInquiry(eventTitle) {
 }
 
 function HighlightHero({ events }) {
+  const navigate = useNavigate()
   const [index, setIndex] = useState(0)
   const activeEvent = events[index] || null
 
@@ -121,7 +125,7 @@ function HighlightHero({ events }) {
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Featured Experience</span>
               </div>
               
-              <h1 className="text-4xl font-black leading-tight text-white sm:text-7xl">
+              <h1 className="text-4xl font-black leading-tight text-white sm:text-6xl">
                 {activeEvent.title}
               </h1>
               
@@ -148,13 +152,13 @@ function HighlightHero({ events }) {
               transition={{ delay: 0.6, duration: 0.8 }}
               className="pt-4"
             >
-              <button
-                onClick={() => eventInquiry(activeEvent.title)}
-                className="group relative flex items-center gap-3 overflow-hidden rounded-2xl bg-white px-8 py-4 text-sm font-black uppercase tracking-widest text-slate-900 transition-all hover:bg-sky-500 hover:text-white"
-              >
-                <span>Register Now</span>
-                <FaArrowRight className="transition-transform group-hover:translate-x-1" />
-              </button>
+            <button
+              onClick={() => navigate(`/event/${activeEvent._id}`)}
+              className="group relative flex items-center gap-3 overflow-hidden rounded-2xl bg-white px-8 py-4 text-sm font-black uppercase tracking-widest text-slate-900 transition-all hover:bg-sky-500 hover:text-white"
+            >
+              <span>Explore & Register</span>
+              <FaArrowRight className="transition-transform group-hover:translate-x-1" />
+            </button>
             </motion.div>
           </div>
         </div>
@@ -365,6 +369,7 @@ function PastEventsCarousel({ events }) {
 }
 
 function UserPage({ events, loading }) {
+  const navigate = useNavigate()
   const sorted = [...events].sort((a, b) => new Date(a.date) - new Date(b.date))
   const active = sorted.filter((event) => event.status === 'active')
   const past = sorted.filter((event) => event.status === 'past')
@@ -441,7 +446,7 @@ function UserPage({ events, loading }) {
                   >
                     <EventFeatureCard
                       event={event}
-                      onInquire={() => eventInquiry(event.title)}
+                      onInquire={() => navigate(`/event/${event._id}`)}
                     />
                   </motion.div>
                 ))}
@@ -879,6 +884,102 @@ function AdminPage({ events, refreshEvents }) {
   )
 }
 
+function EventDetailPage({ events }) {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const event = events.find(e => e._id === id)
+
+  if (!event) return (
+    <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
+      <div className="text-center space-y-4">
+        <h2 className="text-2xl font-bold">Experience Not Found</h2>
+        <button onClick={() => navigate('/')} className="text-sky-400 underline">Return Home</button>
+      </div>
+    </div>
+  )
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="relative min-h-screen w-full overflow-hidden bg-slate-950 text-white"
+    >
+      {/* Immersive Background */}
+      <div className="absolute inset-0">
+        <img src={event.image} alt="" className="h-full w-full object-cover opacity-50" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/20 to-slate-950" />
+      </div>
+
+      {/* Side Progress Indicator */}
+      <div className="absolute left-6 top-1/2 h-32 w-px -translate-y-1/2 bg-white/20 sm:left-10 sm:h-40">
+        <motion.div 
+          initial={{ height: 0 }}
+          animate={{ height: '70%' }}
+          transition={{ duration: 1, delay: 0.5 }}
+          className="w-full bg-white"
+        />
+      </div>
+
+      {/* Back Button */}
+      <button 
+        onClick={() => navigate('/')}
+        className="absolute left-6 top-6 z-50 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/50 transition hover:text-white sm:left-10 sm:top-10"
+      >
+        <FaChevronLeft /> Back to Exploration
+      </button>
+
+      {/* Main Content */}
+      <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 text-center">
+        <motion.h1 
+          initial={{ y: 60, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2, duration: 1, ease: [0.23, 1, 0.32, 1] }}
+          className="max-w-6xl text-5xl font-black uppercase tracking-[-0.05em] leading-[0.85] sm:text-8xl lg:text-9xl"
+        >
+          {event.title.split(' ').map((word, i) => (
+            <span key={i} className="block">{word}</span>
+          ))}
+        </motion.h1>
+
+        {/* Bottom Actions */}
+        <div className="absolute bottom-10 left-6 right-6 flex flex-col items-end justify-between gap-8 sm:bottom-16 sm:left-20 sm:right-20 sm:flex-row sm:items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.6 }}
+            className="max-w-md text-left"
+          >
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-sky-400 mb-2">Experience Details</p>
+            <p className="text-xs font-medium leading-relaxed text-slate-400 sm:text-sm">
+              {event.description || "Step into a world of innovation. This curated experience brings together the best minds and ideas for a transformative institutional journey."}
+            </p>
+            <div className="mt-4 flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-white/40">
+               <span>{event.venue}</span>
+               <span className="h-1 w-1 rounded-full bg-white/20" />
+               <span>{formatDate(event.date)}</span>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ x: 50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="flex items-center gap-3"
+          >
+            <button className="rounded-full border border-white/20 bg-white/5 px-8 py-4 text-[10px] font-black uppercase tracking-widest text-white backdrop-blur-xl transition hover:bg-white/10">
+              About event
+            </button>
+            <button className="rounded-full bg-white px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-900 transition hover:bg-sky-400 hover:text-white hover:scale-105 active:scale-95">
+              Register now!
+            </button>
+          </motion.div>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
 function App() {
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
@@ -899,10 +1000,11 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
+      <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white selection:bg-sky-400 selection:text-white">
         <Routes>
           <Route path="/" element={<UserPage events={events} loading={loading} />} />
           <Route path="/admin" element={<AdminPage events={events} refreshEvents={refreshEvents} />} />
+          <Route path="/event/:id" element={<EventDetailPage events={events} />} />
         </Routes>
       </div>
     </BrowserRouter>
