@@ -37,141 +37,7 @@ const eventSchema = new mongoose.Schema(
 
 const Event = mongoose.model('Event', eventSchema)
 
-const defaultEvents = [
-  {
-    title: 'Global EdTech & AI Leadership Summit',
-    venue: 'Founders Auditorium',
-    location: 'North Campus, Chennai',
-    date: '2026-07-10',
-    image:
-      'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1400&q=80',
-    status: 'active',
-    description:
-      'Connect with visionary educators and innovators shaping future-ready institutions.',
-    isHighlighted: true,
-  },
-  {
-    title: 'Faculty Excellence Conclave',
-    venue: 'Blue Hall',
-    location: 'Central Academic Block',
-    date: '2026-08-02',
-    image:
-      'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1400&q=80',
-    status: 'active',
-    description: 'Workshops and keynote sessions for academic excellence, pedagogy, and research.',
-    isHighlighted: true,
-  },
-  {
-    title: 'Future Scholars Research Meet',
-    venue: 'Innovation Hub',
-    location: 'East Campus, Chennai',
-    date: '2026-09-15',
-    image:
-      'https://images.unsplash.com/photo-1517486808906-6ca8b3f8e1e2?auto=format&fit=crop&w=1400&q=80',
-    status: 'active',
-    description: 'Students present cross-disciplinary research to faculty and industry mentors.',
-    isHighlighted: false,
-  },
-  {
-    title: 'Campus Startup Pitch Day',
-    venue: 'Entrepreneurship Lab',
-    location: 'West Campus, Chennai',
-    date: '2026-09-28',
-    image:
-      'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1400&q=80',
-    status: 'active',
-    description: 'Student founders pitch ideas to investors, mentors, and incubator partners.',
-    isHighlighted: true,
-  },
-  {
-    title: 'International Language & Culture Expo',
-    venue: 'Global Exchange Hall',
-    location: 'Main Campus',
-    date: '2026-10-05',
-    image:
-      'https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=1400&q=80',
-    status: 'active',
-    description: 'Celebrate multilingual learning, cultural exchange, and global collaboration.',
-    isHighlighted: false,
-  },
-  {
-    title: 'Advanced Robotics Bootcamp',
-    venue: 'Robotics Research Center',
-    location: 'Tech Block, Chennai',
-    date: '2026-10-18',
-    image:
-      'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=1400&q=80',
-    status: 'active',
-    description: 'Hands-on robotics build sessions guided by industry engineers and faculty experts.',
-    isHighlighted: false,
-  },
-  {
-    title: 'Digital Marketing Masterclass',
-    venue: 'Business Innovation Hall',
-    location: 'North Campus',
-    date: '2026-11-03',
-    image:
-      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1400&q=80',
-    status: 'active',
-    description: 'Practical strategy sessions on branding, analytics, and growth campaigns.',
-    isHighlighted: false,
-  },
-  {
-    title: 'National Coding Championship',
-    venue: 'Smart Lab Complex',
-    location: 'East Campus',
-    date: '2026-11-20',
-    image:
-      'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1400&q=80',
-    status: 'active',
-    description: 'Top coders compete in algorithmic and full-stack rounds with live leaderboard.',
-    isHighlighted: false,
-  },
-  {
-    title: 'Design Thinking for Educators',
-    venue: 'Creative Studio',
-    location: 'Central Block',
-    date: '2026-12-02',
-    image:
-      'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1400&q=80',
-    status: 'active',
-    description: 'Faculty workshop focused on student-centric curriculum and innovation methods.',
-    isHighlighted: false,
-  },
-  {
-    title: 'Data Science Career Fair',
-    venue: 'Placement Convention Center',
-    location: 'Main Campus',
-    date: '2026-12-15',
-    image:
-      'https://images.unsplash.com/photo-1551281044-8b2f1f7b5d8d?auto=format&fit=crop&w=1400&q=80',
-    status: 'active',
-    description: 'Meet hiring teams, attend career talks, and explore internships in analytics.',
-    isHighlighted: false,
-  },
-  {
-    title: 'Sustainability & Green Campus Forum',
-    venue: 'Eco Innovation Hall',
-    location: 'South Campus',
-    date: '2027-01-08',
-    image:
-      'https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?auto=format&fit=crop&w=1400&q=80',
-    status: 'active',
-    description: 'Panel discussions and projects on renewable practices and sustainable education.',
-    isHighlighted: false,
-  },
-  {
-    title: 'Innovation Fest 2025',
-    venue: 'Open Learning Arena',
-    location: 'South Campus',
-    date: '2025-12-12',
-    image:
-      'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1400&q=80',
-    status: 'past',
-    description: 'Showcase of student projects, prototypes, and multidisciplinary collaboration.',
-    isHighlighted: false,
-  },
-]
+
 
 function signAdminToken() {
   return jwt.sign({ role: 'admin' }, JWT_SECRET, { expiresIn: '8h' })
@@ -293,25 +159,28 @@ app.delete('/api/events/:id', requireAdmin, async (req, res) => {
 })
 
 async function bootstrap() {
-  await mongoose.connect(MONGODB_URI)
-  const count = await Event.countDocuments()
-  if (count === 0) {
-    await Event.insertMany(defaultEvents)
-  } else {
-    // Ensure all existing documents have the isHighlighted field
-    await Event.updateMany({ isHighlighted: { $exists: false } }, { isHighlighted: false })
-    
-    const existingTitles = new Set((await Event.find({}, { title: 1 }).lean()).map((event) => event.title))
-    const missingDefaults = defaultEvents.filter((event) => !existingTitles.has(event.title))
-    if (missingDefaults.length > 0) {
-      await Event.insertMany(missingDefaults)
-    }
-  }
+  try {
+    console.log('Connecting to MongoDB...')
+    await mongoose.connect(MONGODB_URI)
+    console.log('Connected successfully to database.')
 
-  app.listen(PORT, () => {
-    // eslint-disable-next-line no-console
-    console.log(`API running on http://localhost:${PORT}`)
-  })
+    // Ensure all existing documents have the isHighlighted field
+    const updateResult = await Event.updateMany({ isHighlighted: { $exists: false } }, { isHighlighted: false })
+    if (updateResult.modifiedCount > 0) {
+      console.log(`Migrated ${updateResult.modifiedCount} events with missing highlight field.`)
+    }
+
+    const count = await Event.countDocuments()
+    console.log(`Database ready. Current event count: ${count}`)
+
+    app.listen(PORT, () => {
+      console.log(`API running on http://localhost:${PORT}`)
+    })
+  } catch (error) {
+    console.error('Critical Error during bootstrap:')
+    console.error(error)
+    process.exit(1)
+  }
 }
 
 bootstrap().catch((error) => {
