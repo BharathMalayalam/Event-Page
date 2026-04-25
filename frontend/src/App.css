@@ -1,0 +1,260 @@
+.app-frame {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f7fcff 0%, #edf8ff 100%);
+  color: #0d3f66;
+}
+
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2.2rem;
+  background: #ffffff;
+  border-bottom: 1px solid #d6ebf8;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.top-nav h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.top-nav nav {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.top-nav a {
+  text-decoration: none;
+  color: #0f558a;
+  font-weight: 600;
+  padding: 0.5rem 0.9rem;
+  border-radius: 10px;
+}
+
+.top-nav a:hover {
+  background: #e7f5ff;
+}
+
+.page-shell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 2.5rem;
+}
+
+.hero-banner {
+  background: linear-gradient(135deg, #e8f7ff 0%, #ffffff 100%);
+  border: 1px solid #cae8fa;
+  border-radius: 20px;
+  padding: 1.8rem;
+  box-shadow: 0 10px 24px rgba(18, 97, 148, 0.08);
+}
+
+.hero-kicker {
+  color: #1778bd;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+
+.hero-banner h1 {
+  margin: 0.6rem 0;
+  font-size: 2rem;
+}
+
+.hero-text {
+  margin: 0;
+  max-width: 700px;
+  color: #3e6790;
+}
+
+.section-wrap {
+  margin-top: 1.6rem;
+}
+
+.section-head h2 {
+  margin-bottom: 0.35rem;
+}
+
+.section-head p {
+  margin-top: 0;
+  color: #4d7497;
+}
+
+.event-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.event-card {
+  border: 1px solid #cae9fb;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(26, 107, 158, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.event-card-highlight {
+  border: 2px solid #45a7ec;
+  transform: translateY(-2px);
+}
+
+.event-image {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+}
+
+.event-content {
+  padding: 1rem;
+}
+
+.chip {
+  display: inline-flex;
+  margin: 0;
+  background: #e9f6ff;
+  color: #0f70b3;
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.event-content h3 {
+  margin: 0.65rem 0;
+}
+
+.event-meta p {
+  margin: 0.2rem 0;
+  color: #325f86;
+}
+
+.inquiry-button,
+.primary-button,
+.secondary-button {
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.inquiry-button,
+.primary-button {
+  background: #1e8cd4;
+  color: #ffffff;
+}
+
+.inquiry-button {
+  margin-top: 0.75rem;
+}
+
+.inquiry-button:hover,
+.primary-button:hover {
+  background: #1275b6;
+}
+
+.admin-auth-wrap,
+.admin-layout {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.admin-auth-card,
+.admin-form-wrap,
+.admin-events-wrap {
+  background: #ffffff;
+  border: 1px solid #cae9fb;
+  border-radius: 16px;
+  padding: 1.2rem;
+  box-shadow: 0 8px 20px rgba(26, 107, 158, 0.08);
+}
+
+.admin-auth-card {
+  max-width: 420px;
+  margin: 2rem auto;
+}
+
+.admin-auth-card input,
+.admin-form input,
+.admin-form select {
+  width: 100%;
+  margin-top: 0.65rem;
+  border: 1px solid #b5daef;
+  border-radius: 10px;
+  padding: 0.72rem;
+  box-sizing: border-box;
+}
+
+.error-text {
+  color: #bb2124;
+  margin-bottom: 0.8rem;
+}
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.button-row {
+  margin-top: 0.8rem;
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.secondary-button {
+  background: #e4f2fb;
+  color: #0f5f97;
+}
+
+.secondary-button:hover {
+  background: #cee8f8;
+}
+
+.admin-event-list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.admin-event-item {
+  padding: 0.8rem;
+  border: 1px solid #d9effb;
+  border-radius: 12px;
+  background: #fafdff;
+}
+
+.admin-event-item h3 {
+  margin: 0 0 0.25rem;
+}
+
+.admin-event-item p {
+  margin: 0.15rem 0;
+}
+
+.empty-state {
+  background: #eaf6ff;
+  border: 1px dashed #acd6f0;
+  border-radius: 12px;
+  padding: 1rem;
+  color: #3b6c94;
+}
+
+@media (max-width: 900px) {
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .top-nav {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+}
