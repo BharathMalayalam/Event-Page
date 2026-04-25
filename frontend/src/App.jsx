@@ -1,6 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { FaArrowRight, FaCalendarAlt, FaMapMarkerAlt, FaSchool } from 'react-icons/fa'
+import { 
+  FaArrowRight, 
+  FaArrowUp, 
+  FaCalendarAlt, 
+  FaChevronLeft, 
+  FaChevronRight, 
+  FaMapMarkerAlt, 
+  FaSchool,
+  FaClock,
+  FaInfoCircle
+} from 'react-icons/fa'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import EventFeatureCard from './components/EventFeatureCard'
 import FloatingBlobs from './components/FloatingBlobs'
@@ -250,6 +260,110 @@ function EventCard({ event, muted = false }) {
   )
 }
 
+function PastEventsCarousel({ events }) {
+  const [index, setIndex] = useState(0)
+  const [winWidth, setWinWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200)
+
+  useEffect(() => {
+    const handleResize = () => setWinWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  if (!events || events.length === 0) return null
+
+  const next = () => setIndex((prev) => (prev + 1) % events.length)
+  const prev = () => setIndex((prev) => (prev - 1 + events.length) % events.length)
+
+  const isMobile = winWidth < 640
+  const cardWidth = isMobile ? 300 : 500
+  const containerX = -index * cardWidth
+
+  return (
+    <div className="relative py-12">
+      <div className="flex items-center justify-center overflow-hidden">
+        <div className="relative h-[420px] w-full sm:h-[550px]">
+          {/* Moving Track */}
+          <motion.div 
+            animate={{ x: containerX }}
+            transition={{ type: 'spring', stiffness: 260, damping: 28 }}
+            className="absolute left-1/2 flex items-center"
+            style={{ marginLeft: -cardWidth / 2 }}
+          >
+            {events.map((item, i) => {
+              const isCenter = index === i
+              const distance = Math.abs(index - i)
+              
+              return (
+                <motion.div
+                  key={item._id}
+                  animate={{ 
+                    scale: isCenter ? 1 : 0.85,
+                    opacity: distance === 0 ? 1 : (distance === 1 ? 0.4 : 0),
+                    filter: isCenter ? 'blur(0px)' : 'blur(2px)',
+                  }}
+                  transition={{ duration: 0.5 }}
+                  className="relative shrink-0 overflow-hidden rounded-[2.5rem] shadow-2xl"
+                  style={{ width: cardWidth - (isMobile ? 20 : 40), margin: isMobile ? '0 10px' : '0 20px' }}
+                >
+                  <div className="relative h-[380px] w-full sm:h-[500px]">
+                    <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/20 to-transparent" />
+                    
+                    <AnimatePresence>
+                      {isCenter && (
+                        <motion.div 
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="absolute top-6 left-1/2 -translate-x-1/2 rounded-full bg-slate-900/80 px-4 py-1.5 text-[9px] font-black uppercase tracking-widest text-white backdrop-blur-md"
+                        >
+                          Date: {formatDate(item.date)}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    <div className="absolute bottom-8 left-6 right-6 text-white sm:left-10 sm:right-10">
+                      <h3 className="text-xl font-black leading-tight sm:text-3xl">{item.title}</h3>
+                      <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-slate-300 sm:text-xs">{item.venue}, {item.location}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )
+            })}
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Navigation Arrows */}
+      <div className="absolute inset-x-0 top-1/2 z-40 flex -translate-y-1/2 justify-between px-4 sm:px-10">
+        <button 
+          onClick={prev}
+          className="rounded-full bg-sky-400/90 p-3 text-white shadow-xl transition hover:bg-sky-500"
+        >
+          <FaChevronLeft size={16} className="sm:size-5" />
+        </button>
+        <button 
+          onClick={next}
+          className="rounded-full bg-sky-400/90 p-3 text-white shadow-xl transition hover:bg-sky-500"
+        >
+          <FaChevronRight size={16} className="sm:size-5" />
+        </button>
+      </div>
+
+      {/* Pagination Dots */}
+      <div className="mt-8 flex justify-center gap-1.5">
+        {events.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setIndex(i)}
+            className={`h-1.5 rounded-full transition-all duration-300 ${index === i ? 'w-8 bg-sky-500' : 'w-1.5 bg-slate-200'}`}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function UserPage({ events, loading }) {
   const sorted = [...events].sort((a, b) => new Date(a.date) - new Date(b.date))
   const active = sorted.filter((event) => event.status === 'active')
@@ -258,14 +372,23 @@ function UserPage({ events, loading }) {
   const topHighlights = highlightedEvents
 
   return (
-    <main className="relative w-full space-y-10 py-8">
+    <main className="relative w-full space-y-12 py-6 sm:py-10">
       <FloatingBlobs />
+      
+      {/* Back to Top Button */}
+      <button 
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="fixed bottom-6 right-6 z-[100] rounded-full bg-sky-400 p-3 text-white shadow-2xl transition-all hover:bg-sky-500 hover:scale-110 active:scale-95 sm:bottom-10 sm:right-10 sm:p-4"
+      >
+        <FaArrowUp size={20} className="sm:size-6" />
+      </button>
+
       <section className="relative z-10 mx-auto max-w-7xl space-y-3 px-4 sm:px-6 lg:px-8">
-        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-sky-600">
+        <p className="text-xs font-black uppercase tracking-[0.2em] text-sky-600 sm:text-sm">
           Institution Events
         </p>
-        <h2 className="text-3xl font-bold text-slate-800 sm:text-4xl">
-          Crafted experiences for learning communities
+        <h2 className="max-w-3xl text-2xl font-black tracking-tight text-slate-900 sm:text-4xl">
+          Crafted experiences for <br className="hidden sm:block" /> learning communities
         </h2>
       </section>
 
@@ -341,11 +464,13 @@ function UserPage({ events, loading }) {
           title="Past Events"
           subtitle="Completed events and institutional highlights"
         >
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {loading
-              ? Array.from({ length: 3 }).map((_, idx) => <EventSkeleton key={`past-skeleton-${idx}`} />)
-              : past.map((event) => <EventCard key={event._id} event={event} muted />)}
-          </div>
+          {loading ? (
+             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+               {Array.from({ length: 3 }).map((_, idx) => <EventSkeleton key={`past-skeleton-${idx}`} />)}
+             </div>
+          ) : (
+            <PastEventsCarousel events={past} />
+          )}
         </SectionWrap>
       </div>
 
@@ -362,8 +487,17 @@ function AdminPage({ events, refreshEvents }) {
   const [editingId, setEditingId] = useState(null)
   const [formData, setFormData] = useState(emptyForm)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [processingId, setProcessingId] = useState(null) // Tracks which card action is in progress
 
   const sorted = useMemo(() => [...events].sort((a, b) => new Date(a.date) - new Date(b.date)), [events])
+
+  // Clear toast message after 3 seconds
+  useEffect(() => {
+    if (statusMessage) {
+      const timer = setTimeout(() => setStatusMessage(''), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [statusMessage])
 
   function handleLogin(e) {
     e.preventDefault()
@@ -404,7 +538,7 @@ function AdminPage({ events, refreshEvents }) {
   async function handleSubmit(e) {
     e.preventDefault()
     if (!formData.title || !formData.venue || !formData.location || !formData.date || !formData.image) {
-      setError('Please fill in all required fields (Title, Venue, Location, Date, Image).')
+      setError('Required: Title, Venue, Location, Date, Image.')
       return
     }
 
@@ -425,7 +559,7 @@ function AdminPage({ events, refreshEvents }) {
         })
       }
       await refreshEvents()
-      const msg = editingId ? 'Event updated successfully.' : 'Event added successfully.'
+      const msg = editingId ? 'Experience updated successfully' : 'New experience launched'
       resetForm()
       setStatusMessage(msg)
     } catch (apiError) {
@@ -451,20 +585,24 @@ function AdminPage({ events, refreshEvents }) {
   }
 
   async function handleDelete(id) {
-    if (!window.confirm('Are you sure you want to delete this event?')) return
+    if (!window.confirm('Permanent delete? This cannot be undone.')) return
+    setProcessingId(id)
     try {
       await apiFetch(`/events/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       })
       await refreshEvents()
-      setStatusMessage('Event deleted.')
+      setStatusMessage('Event permanently removed')
     } catch (apiError) {
       setError(apiError.message)
+    } finally {
+      setProcessingId(null)
     }
   }
 
   async function toggleStatus(event) {
+    setProcessingId(`${event._id}-status`)
     try {
       await apiFetch(`/events/${event._id}/status`, {
         method: 'PATCH',
@@ -474,13 +612,16 @@ function AdminPage({ events, refreshEvents }) {
         headers: { Authorization: `Bearer ${token}` },
       })
       await refreshEvents()
-      setStatusMessage('Event status updated.')
+      setStatusMessage(`Event moved to ${event.status === 'active' ? 'Archive' : 'Active'}`)
     } catch (apiError) {
       setError(apiError.message)
+    } finally {
+      setProcessingId(null)
     }
   }
 
   async function setHighlighted(id, currentHighlightStatus) {
+    setProcessingId(`${id}-highlight`)
     const nextStatus = !currentHighlightStatus
     try {
       await apiFetch(`/events/${id}/highlight`, {
@@ -489,9 +630,11 @@ function AdminPage({ events, refreshEvents }) {
         headers: { Authorization: `Bearer ${token}` },
       })
       await refreshEvents()
-      setStatusMessage('Highlight status updated.')
+      setStatusMessage(nextStatus ? 'Hero highlight enabled' : 'Hero highlight disabled')
     } catch (apiError) {
       setError(apiError.message)
+    } finally {
+      setProcessingId(null)
     }
   }
 
@@ -505,12 +648,12 @@ function AdminPage({ events, refreshEvents }) {
         >
           <div className="text-center space-y-2">
             <h2 className="text-3xl font-black tracking-tight text-slate-900">Admin Login</h2>
-            <p className="text-sm font-medium text-slate-500">Secure access to events management</p>
+            <p className="text-sm font-medium text-slate-500 uppercase tracking-widest">Secure Console</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-1">
-              <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Password</label>
+              <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Master Key</label>
               <input
                 type="password"
                 value={password}
@@ -524,7 +667,7 @@ function AdminPage({ events, refreshEvents }) {
               type="submit"
               className="w-full rounded-2xl bg-slate-900 py-4 font-black uppercase tracking-widest text-white shadow-lg transition-all hover:bg-sky-700 hover:shadow-sky-100 active:scale-[0.98]"
             >
-              Enter Dashboard
+              Access Dashboard
             </button>
           </form>
         </motion.div>
@@ -533,7 +676,22 @@ function AdminPage({ events, refreshEvents }) {
   }
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <main className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      {/* Dynamic Toast Notification */}
+      <AnimatePresence>
+        {statusMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -50, x: '-50%' }}
+            animate={{ opacity: 1, y: 0, x: '-50%' }}
+            exit={{ opacity: 0, y: -50, x: '-50%' }}
+            className="fixed left-1/2 top-10 z-[100] flex items-center gap-3 rounded-2xl bg-slate-900 px-6 py-4 shadow-2xl shadow-slate-200"
+          >
+            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            <span className="text-xs font-black uppercase tracking-widest text-white">{statusMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <header className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="space-y-1">
           <h1 className="text-4xl font-black tracking-tight text-slate-900">Experience Console</h1>
@@ -635,7 +793,6 @@ function AdminPage({ events, refreshEvents }) {
           </form>
 
           {error && <p className="mt-6 text-sm font-bold text-red-500">{error}</p>}
-          {statusMessage && <p className="mt-6 text-sm font-bold text-emerald-600">{statusMessage}</p>}
         </section>
 
         {/* Bottom Section: Grid of Events */}
@@ -663,14 +820,14 @@ function AdminPage({ events, refreshEvents }) {
                     <img src={event.image} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
                     <div className="absolute top-4 right-4 flex gap-2">
-                      <span className={`rounded-full px-3 py-1 text-[8px] font-black uppercase tracking-widest backdrop-blur-md ${
-                        event.status === 'active' ? 'bg-emerald-500/80 text-white' : 'bg-slate-500/80 text-white'
+                      <span className={`rounded-full px-3 py-1 text-[8px] font-black uppercase tracking-widest backdrop-blur-md shadow-lg ${
+                        event.status === 'active' ? 'bg-emerald-500 text-white' : 'bg-slate-500 text-white'
                       }`}>
                         {event.status}
                       </span>
                       {event.isHighlighted && (
-                        <span className="rounded-full bg-sky-500/80 px-3 py-1 text-[8px] font-black uppercase tracking-widest text-white backdrop-blur-md">
-                          Featured
+                        <span className="rounded-full bg-sky-500 px-3 py-1 text-[8px] font-black uppercase tracking-widest text-white backdrop-blur-md shadow-lg">
+                          Hero Featured
                         </span>
                       )}
                     </div>
@@ -683,14 +840,33 @@ function AdminPage({ events, refreshEvents }) {
                     </div>
 
                     <div className="mt-6 grid grid-cols-2 gap-2">
-                      <button onClick={() => handleEdit(event)} className="rounded-xl bg-slate-50 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-600 transition hover:bg-sky-600 hover:text-white">Edit</button>
-                      <button onClick={() => toggleStatus(event)} className="rounded-xl bg-slate-50 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-600 transition hover:bg-slate-900 hover:text-white">
-                        {event.status === 'active' ? 'Archive' : 'Activate'}
+                      <button 
+                        onClick={() => handleEdit(event)} 
+                        className="rounded-xl bg-slate-50 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-600 transition hover:bg-sky-600 hover:text-white"
+                      >
+                        Edit
                       </button>
-                      <button onClick={() => setHighlighted(event._id, event.isHighlighted)} className="rounded-xl bg-slate-50 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-600 transition hover:bg-indigo-600 hover:text-white">
-                        {event.isHighlighted ? 'Unhighlight' : 'Highlight'}
+                      <button 
+                        onClick={() => toggleStatus(event)} 
+                        disabled={processingId === `${event._id}-status`}
+                        className="rounded-xl bg-slate-50 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-600 transition hover:bg-slate-900 hover:text-white disabled:opacity-50"
+                      >
+                        {processingId === `${event._id}-status` ? '...' : (event.status === 'active' ? 'Archive' : 'Activate')}
                       </button>
-                      <button onClick={() => handleDelete(event._id)} className="rounded-xl bg-red-50 py-2.5 text-[10px] font-black uppercase tracking-widest text-red-600 transition hover:bg-red-600 hover:text-white">Delete</button>
+                      <button 
+                        onClick={() => setHighlighted(event._id, event.isHighlighted)} 
+                        disabled={processingId === `${event._id}-highlight`}
+                        className="rounded-xl bg-slate-50 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-600 transition hover:bg-indigo-600 hover:text-white disabled:opacity-50"
+                      >
+                        {processingId === `${event._id}-highlight` ? '...' : (event.isHighlighted ? 'Unhighlight' : 'Highlight')}
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(event._id)} 
+                        disabled={processingId === event._id}
+                        className="rounded-xl bg-red-50 py-2.5 text-[10px] font-black uppercase tracking-widest text-red-600 transition hover:bg-red-600 hover:text-white disabled:opacity-50"
+                      >
+                        {processingId === event._id ? '...' : 'Delete'}
+                      </button>
                     </div>
                   </div>
                 </motion.div>
