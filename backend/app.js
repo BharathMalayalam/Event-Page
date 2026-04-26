@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs'
+import compression from 'compression'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
@@ -8,6 +9,7 @@ import mongoose from 'mongoose'
 dotenv.config()
 
 const app = express()
+app.use(compression())
 const PORT = process.env.PORT || 5000
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/edu-events'
 const JWT_SECRET = process.env.JWT_SECRET || 'replace-this-in-production'

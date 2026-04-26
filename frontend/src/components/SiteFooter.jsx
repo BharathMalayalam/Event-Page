@@ -15,7 +15,7 @@ function SiteFooter() {
         <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
           <div className="space-y-2 text-center md:text-left">
             <h3 className="text-xl font-black tracking-tighter text-slate-900">
-            CYBER<span className="text-sky-600">NAUT</span>
+            CYBERNAUT<span className="text-sky-600"> EDTECH</span>
             </h3>
             <p className="text-xs font-medium uppercase tracking-widest text-slate-500">
               ENDEAVOUR TO EXPLORE
