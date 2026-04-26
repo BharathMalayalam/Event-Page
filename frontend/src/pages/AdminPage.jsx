@@ -226,7 +226,7 @@ export default function AdminPage({ events, refreshEvents }) {
 
       <header className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="space-y-1">
-          <h1 className="text-4xl font-black tracking-tight text-slate-900">Experience Console</h1>
+          <h1 className="text-4xl font-black tracking-tight text-slate-900">ADMIN PAGE</h1>
           <p className="text-sm font-medium text-slate-500 uppercase tracking-[0.2em]">Manage your institutional events and highlights</p>
         </div>
         <button
@@ -236,7 +236,7 @@ export default function AdminPage({ events, refreshEvents }) {
           }}
           className="rounded-xl border border-slate-200 bg-white px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-600 transition hover:bg-slate-50 hover:text-red-500"
         >
-          Logout Session
+          LOGOUT
         </button>
       </header>
 
@@ -244,7 +244,7 @@ export default function AdminPage({ events, refreshEvents }) {
         <section className="rounded-[3rem] border border-white bg-white/70 p-10 shadow-2xl shadow-sky-100 backdrop-blur-2xl">
           <div className="mb-8 flex items-center justify-between">
             <h2 className="text-2xl font-black tracking-tight text-slate-900">
-              {editingId ? 'Edit Event Details' : 'Deploy New Experience'}
+              {editingId ? 'Edit Event Details' : 'Deploy New Event'}
             </h2>
             {editingId && (
               <button onClick={resetForm} className="text-xs font-bold uppercase tracking-widest text-sky-600 hover:text-sky-800">
@@ -308,7 +308,7 @@ export default function AdminPage({ events, refreshEvents }) {
                   onChange={(e) => setFormData((prev) => ({ ...prev, isHighlighted: e.target.checked }))}
                   className="h-6 w-6 rounded-lg border-slate-200 text-sky-600 focus:ring-sky-500"
                 />
-                <span className="text-sm font-bold text-slate-700">Display this experience in the homepage Hero slider</span>
+                <span className="text-sm font-bold text-slate-700">Display this event in the homepage Hero slider</span>
               </label>
 
               <div className="flex gap-4">
@@ -317,7 +317,7 @@ export default function AdminPage({ events, refreshEvents }) {
                   disabled={isSubmitting}
                   className="rounded-2xl bg-slate-900 px-10 py-4 text-xs font-black uppercase tracking-widest text-white shadow-xl shadow-slate-200 transition-all hover:bg-sky-700 hover:shadow-sky-100 disabled:opacity-50"
                 >
-                  {isSubmitting ? 'Processing...' : editingId ? 'Update Information' : 'Publish Experience'}
+                  {isSubmitting ? 'Processing...' : editingId ? 'Update Information' : 'Publish Event'}
                 </button>
               </div>
             </div>
