@@ -26,6 +26,7 @@ export default function HighlightHero({ events }) {
   }, [events])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIndex(0)
   }, [events.length])
 

@@ -11,13 +11,13 @@ const EventDetailPage = lazy(() => import('./pages/EventDetailPage'))
 // Premium loading fallback
 const LoadingScreen = () => (
   <div className="fixed inset-0 z-[1000] flex flex-col items-center justify-center bg-white/80 backdrop-blur-md">
-     <div className="relative h-20 w-20">
-        <div className="absolute inset-0 animate-ping rounded-full bg-sky-100" />
-        <div className="relative flex h-20 w-20 items-center justify-center rounded-full border-2 border-sky-100 bg-white shadow-xl">
-           <div className="h-10 w-10 animate-spin rounded-full border-t-4 border-sky-500" />
-        </div>
-     </div>
-     <p className="mt-6 text-[10px] font-black uppercase tracking-[0.4em] text-sky-900/40">Initializing Experience</p>
+    <div className="relative h-20 w-20">
+      <div className="absolute inset-0 animate-ping rounded-full bg-sky-100" />
+      <div className="relative flex h-20 w-20 items-center justify-center rounded-full border-2 border-sky-100 bg-white shadow-xl">
+        <div className="h-10 w-10 animate-spin rounded-full border-t-4 border-sky-500" />
+      </div>
+    </div>
+    <p className="mt-6 text-[10px] font-black uppercase tracking-[0.4em] text-sky-900/40">Initializing Experience</p>
   </div>
 )
 
@@ -39,6 +39,7 @@ function App() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     refreshEvents()
   }, [])
 

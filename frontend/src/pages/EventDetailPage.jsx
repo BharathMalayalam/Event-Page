@@ -18,7 +18,7 @@ export default function EventDetailPage({ events }) {
   )
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -32,7 +32,7 @@ export default function EventDetailPage({ events }) {
 
       {/* Side Progress Indicator */}
       <div className="absolute left-6 top-1/2 h-32 w-px -translate-y-1/2 bg-sky-900/20 sm:left-10 sm:h-40">
-        <motion.div 
+        <motion.div
           initial={{ height: 0 }}
           animate={{ height: '70%' }}
           transition={{ duration: 1, delay: 0.5 }}
@@ -41,7 +41,7 @@ export default function EventDetailPage({ events }) {
       </div>
 
       {/* Back Button */}
-      <button 
+      <button
         onClick={() => navigate('/')}
         className="absolute left-6 top-6 z-50 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-sky-900/50 transition hover:text-sky-500 sm:left-10 sm:top-10"
       >
@@ -50,7 +50,7 @@ export default function EventDetailPage({ events }) {
 
       {/* Main Content */}
       <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 text-center">
-        <motion.h1 
+        <motion.h1
           initial={{ y: 60, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2, duration: 1, ease: [0.23, 1, 0.32, 1] }}
@@ -74,13 +74,13 @@ export default function EventDetailPage({ events }) {
               {event.description || "Step into a world of innovation. This curated experience brings together the best minds and ideas for a transformative institutional journey."}
             </p>
             <div className="mt-4 flex items-center gap-4 text-[11px] font-black uppercase tracking-widest text-sky-900/80">
-               <span>{event.venue}</span>
-               <span className="h-1.5 w-1.5 rounded-full bg-sky-900/30" />
-               <span>{formatDate(event.date)}</span>
+              <span>{event.venue}</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-sky-900/30" />
+              <span>{formatDate(event.date)}</span>
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ x: 50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.8 }}

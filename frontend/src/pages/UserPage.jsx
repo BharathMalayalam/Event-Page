@@ -20,9 +20,9 @@ export default function UserPage({ events, loading }) {
   return (
     <main className="relative w-full space-y-12 py-6 sm:py-10">
       <FloatingBlobs />
-      
+
       {/* Back to Top Button */}
-      <button 
+      <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         className="fixed bottom-6 right-6 z-[100] rounded-full bg-sky-400 p-3 text-white shadow-2xl transition-all hover:bg-sky-500 hover:scale-110 active:scale-95 sm:bottom-10 sm:right-10 sm:p-4"
       >
@@ -61,12 +61,12 @@ export default function UserPage({ events, loading }) {
           <motion.div
             variants={{
               hidden: { opacity: 0 },
-              visible: { 
+              visible: {
                 opacity: 1,
-                transition: { 
+                transition: {
                   staggerChildren: 0.15,
                   delayChildren: 0.2
-                } 
+                }
               }
             }}
             initial="hidden"
@@ -77,20 +77,20 @@ export default function UserPage({ events, loading }) {
             {loading
               ? Array.from({ length: 6 }).map((_, idx) => <EventSkeleton key={`active-skeleton-${idx}`} />)
               : active.map((event) => (
-                  <motion.div
-                    key={event._id}
-                    variants={{
-                      hidden: { opacity: 0, y: 40, scale: 0.95 },
-                      visible: { opacity: 1, y: 0, scale: 1 }
-                    }}
-                    transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-                  >
-                    <EventFeatureCard
-                      event={event}
-                      onInquire={() => navigate(`/event/${event._id}`)}
-                    />
-                  </motion.div>
-                ))}
+                <motion.div
+                  key={event._id}
+                  variants={{
+                    hidden: { opacity: 0, y: 40, scale: 0.95 },
+                    visible: { opacity: 1, y: 0, scale: 1 }
+                  }}
+                  transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+                >
+                  <EventFeatureCard
+                    event={event}
+                    onInquire={() => navigate(`/event/${event._id}`)}
+                  />
+                </motion.div>
+              ))}
           </motion.div>
 
           {!loading && active.length === 0 && (
@@ -111,9 +111,9 @@ export default function UserPage({ events, loading }) {
           subtitle="Completed events and institutional highlights"
         >
           {loading ? (
-             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-               {Array.from({ length: 3 }).map((_, idx) => <EventSkeleton key={`past-skeleton-${idx}`} />)}
-             </div>
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {Array.from({ length: 3 }).map((_, idx) => <EventSkeleton key={`past-skeleton-${idx}`} />)}
+            </div>
           ) : (
             <PastEventsCarousel events={past} />
           )}
