@@ -1,3 +1,8 @@
+*, *::before, *::after {
+  font-family: 'Unbounded', sans-serif;
+  box-sizing: border-box;
+}
+
 .app-frame {
   min-height: 100vh;
   background: linear-gradient(180deg, #f7fcff 0%, #edf8ff 100%);

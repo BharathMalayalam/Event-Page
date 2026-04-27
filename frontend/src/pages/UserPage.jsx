@@ -12,8 +12,14 @@ import FloatingBlobs from '../components/FloatingBlobs'
 export default function UserPage({ events, loading }) {
   const navigate = useNavigate()
   const sorted = [...events].sort((a, b) => new Date(a.date) - new Date(b.date))
-  const active = sorted.filter((event) => event.status === 'active')
-  const past = sorted.filter((event) => event.status === 'past')
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const active = sorted.filter((event) => new Date(event.date).setHours(0, 0, 0, 0) >= today.getTime())
+  // Past events: most recent first (reverse chronological)
+  const past = [...sorted]
+    .filter((event) => new Date(event.date).setHours(0, 0, 0, 0) < today.getTime())
+    .reverse()
   const highlightedEvents = active.filter((event) => event.isHighlighted)
   const topHighlights = highlightedEvents
 
@@ -98,8 +104,8 @@ export default function UserPage({ events, loading }) {
               <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-xl shadow-sky-100">
                 <FaCalendarAlt className="text-3xl text-sky-300" />
               </div>
-              <h3 className="text-xl font-bold text-slate-800">No active events found</h3>
-              <p className="mt-2 text-slate-500">Check back later for new opportunities!</p>
+              <h3 className="text-xl font-bold text-slate-800">No upcoming events</h3>
+              <p className="mt-2 text-slate-500">All events have concluded — check the Past Events section below!</p>
             </div>
           )}
         </SectionWrap>

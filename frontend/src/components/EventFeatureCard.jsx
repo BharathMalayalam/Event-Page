@@ -1,5 +1,17 @@
 import { motion } from 'framer-motion'
-import { FaArrowRight, FaMapMarkerAlt, FaSchool } from 'react-icons/fa'
+import { FaArrowRight, FaCalendarAlt, FaMapMarkerAlt, FaSchool } from 'react-icons/fa'
+import { formatDate } from '../utils/api'
+
+function getDaysUntil(dateValue) {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const eventDate = new Date(dateValue)
+  eventDate.setHours(0, 0, 0, 0)
+  const diff = Math.round((eventDate - today) / (1000 * 60 * 60 * 24))
+  if (diff === 0) return { label: 'Today', color: 'bg-emerald-500', pulse: true }
+  if (diff === 1) return { label: 'Tomorrow', color: 'bg-sky-500', pulse: false }
+  return { label: `In ${diff} days`, color: 'bg-indigo-500', pulse: false }
+}
 
 function EventFeatureCard({ event, onInquire }) {
   return (
@@ -28,11 +40,24 @@ function EventFeatureCard({ event, onInquire }) {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
           
-          {/* Status Badge */}
-          <div className="absolute right-4 top-4">
-            <span className="flex items-center gap-1.5 rounded-full border border-white/50 bg-white/20 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white backdrop-blur-md">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-              Live
+          {/* Dynamic Date Badge */}
+          {(() => {
+            const { label, color, pulse } = getDaysUntil(event.date)
+            return (
+              <div className="absolute right-4 top-4">
+                <span className={`flex items-center gap-1.5 rounded-full border border-white/30 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-white backdrop-blur-md shadow-lg ${color}`}>
+                  <span className={`h-1.5 w-1.5 rounded-full bg-white/80 ${pulse ? 'animate-pulse' : ''}`} />
+                  {label}
+                </span>
+              </div>
+            )
+          })()}
+
+          {/* Date strip at bottom of image */}
+          <div className="absolute bottom-3 left-3">
+            <span className="flex items-center gap-1.5 rounded-xl border border-white/20 bg-slate-900/70 px-3 py-1.5 text-[10px] font-bold text-white backdrop-blur-md">
+              <FaCalendarAlt className="text-sky-300" size={9} />
+              {formatDate(event.date)}
             </span>
           </div>
         </div>
